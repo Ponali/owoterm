@@ -33,6 +33,24 @@ let scrollRegionTop = 0;
 let scrollRegionBot = 0;
 
 let visual;
+let alt = {};
+let alternativeBuffer = false;
+
+function createVisualBuffer(){
+    return [...new Array(height)].map(a=>
+        [...new Array(width)].map(a=>
+            [" ",fgcolor,bgcolor]
+        )
+    )
+}
+
+function copyBuffer(bufA,bufB){
+    for(let y=0;y<height;y++){
+        for(let x=0;x<width;x++){
+            bufB[y][x] = JSON.parse(JSON.stringify(bufA[y][x]));
+        }
+    }
+}
 
 function writeCharToVisual(x,y,s,fg,bg){
     if(x>=0 && y>=0 && x<width && y<height){
@@ -320,6 +338,33 @@ function special(type,enable){
     if(type==25){
         curVisible = enable;
     }
+    if(type==1049){
+        if(alternativeBuffer!=enable){
+            loopscroll=0;
+            if(enable){
+                copyBuffer(visual,alt.visual);
+                for(let y=0;y<height;y++){
+                    writeText(0,y," ".repeat(width),fgcolor,bgcolor);
+                }
+                alt.curx = curx;
+                alt.cury = cury;
+                alt.wrapSkip = wrapSkip;
+                alt.curVisible = curVisible;
+                alt.fgcolor = fgcolor;
+                alt.bgcolor = bgcolor;
+            } else {
+                copyBuffer(alt.visual,visual);
+                curx = alt.curx;
+                cury = alt.cury;
+                wrapSkip = alt.wrapSkip;
+                curVisible = alt.curVisible;
+                fgcolor = alt.fgcolor;
+                bgcolor = alt.bgcolor;
+            }
+            reload();
+        }
+        alternativeBuffer = enable;
+    }
     console.error(`special ${enable?"enable":"disable"} ${type}`);
 }
 
@@ -450,11 +495,8 @@ parentPort.on("message",async (m)=>{
     if(m.type=="settings"){
         ({world,width,height,offsetX,offsetY,loopscrolling,loopscrollResetTimeout,defaultbg,defaultfg} = m.settings); // WHYYYYYY??????!!§??§???!§§???????
         input.settings(m.settings);
-        visual = [...new Array(height)].map(a=>
-            [...new Array(width)].map(a=>
-                [" ",fgcolor,bgcolor]
-            )
-        );
+        visual = createVisualBuffer();
+        alt.visual = createVisualBuffer();
         scrollRegionBot = height-1;
         bgcolor = defaultbg;
         fgcolor = defaultfg;
