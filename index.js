@@ -102,7 +102,7 @@ worker.on('message',(msg)=>{
     }
     if(msg.type=="hardReset") stream.hardReset();
     if(msg.type=="softReset") stream.softReset();
-    if(msg.type=="ready") {
+    if(msg.type=="ready"){
         (async function(){
            while(true){
                await parseChars();
@@ -110,4 +110,14 @@ worker.on('message',(msg)=>{
         })();
         // TODO: add an interval that shows the amount of characters left in the buffer
     }
+    if(msg.type=="exit"){
+        process.exit();
+    }
+});
+
+process.on('SIGINT',function(){
+    console.log("stopping...");
+    stream.quit().then(()=>{
+        worker.postMessage({type:"exit"});
+    })
 });

@@ -449,6 +449,11 @@ async function handleMessage(m){
             await resetLoopScroll();
         }
     }
+
+    // misc.
+    if(m.type=="exit"){
+        parentPort.postMessage({type:"exit"})
+    }
 }
 
 // message queue system so that it doesn't desync

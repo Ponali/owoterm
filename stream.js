@@ -14,7 +14,7 @@ function addToBuffer(data){
 }
 
 function spawnChild(){
-    child = spawn(runExec);
+    child = spawn(runExec, [], {detached:true});
     child.stdout.setEncoding("utf8");
     child.stdout.on("data",data=>{
         // console.log(`recieved ${data.length} chars of data`)
@@ -28,17 +28,21 @@ function spawnChild(){
 
     child.on("close",(code,signal)=>{
         console.log("close signal");
-        if(code==null){
-            addToBuffer("\r\n\x1b[0;33mQEMU VM instance has been killed. (signal "+signal+")\x1b[0m\r\n")
-            setTimeout(()=>{
-                spawnChild();
-            },2000)
-        } else if (typeof(code)=="number" && code>0){
-            addToBuffer("\r\n\x1b[0;33mQEMU VM instance has crashed. (code "+code+")\r\n")
-        } else {
-            spawnChild();
-        }
+        onChildClose(code,signal);
     })
+}
+
+function onChildClose(code,signal){
+    if(code==null){
+        addToBuffer("\r\n\x1b[0;33mQEMU VM instance has been killed. (signal "+signal+")\x1b[0m\r\n")
+        setTimeout(()=>{
+            spawnChild();
+        },2000)
+    } else if (typeof(code)=="number" && code>0){
+        addToBuffer("\r\n\x1b[0;33mQEMU VM instance has crashed. (code "+code+")\r\n")
+    } else {
+        spawnChild();
+    }
 }
 
 function read(n){
@@ -84,12 +88,19 @@ function softReset(){
     })
 }
 
+function quit(){
+    return new Promise(resolve=>{
+        onChildClose = resolve;
+        softReset();
+    })
+}
+
 module.exports = function(s){
     ({runExec,qmpPort} = s); // why...
     spawnChild();
     return {
         read,
         write:(data)=>{child.stdin.write(data);},
-        hardReset,softReset
+        hardReset,softReset,quit
     };
 }
