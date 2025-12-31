@@ -154,7 +154,7 @@ function drawTextArea(){
 
 function drawPowerButton(type){
     switch(type){
-        case 0:if(qmpPort) writeText(0,height+4,"⏻ Hard Reset",0x000060,0xaaaaaa);break;
+        case 0:if(qmpPort) writeText(0,height+4,"⏻ Hard Reset",0x600000,0xaaaaaa);break;
         case 1:if(qmpPort) writeText(13,height+4,"↻ Soft Reset",0x000000,0xaaaaaa);break;
     }
 }
