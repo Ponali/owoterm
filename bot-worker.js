@@ -291,9 +291,7 @@ async function insertLines(n){
     await sleep(100);
 }
 
-async function resetLoopScroll(){
-    if(loopscroll==0 || (!loopscrolling)) return;
-    loopscroll=0;
+async function reload(){
     for(let y=0;y<height;y++){
         for(let x=0;x<width;x++){
             const char = visual[y][x];
@@ -302,6 +300,12 @@ async function resetLoopScroll(){
         await bot.flushWrites();
     }
     if(curVisible) drawCursor(true);
+}
+
+async function resetLoopScroll(){
+    if(loopscroll==0 || (!loopscrolling)) return;
+    loopscroll=0;
+    await reload();
     indicateLoopScroll();
 }
 
@@ -413,7 +417,7 @@ async function onConnect(){
         await bot.flushWrites();
     }
     if(loopscrolling) indicateLoopScroll();
-    await input.init([bot,parentPort,writeChar,writeText,offsetX,offsetY,width,height]);
+    await input.init([bot,parentPort,writeChar,writeText,offsetX,offsetY,width,height,reload]);
     parentPort.postMessage({type:"ready"});
     let cursorShown = false;
     while(true){

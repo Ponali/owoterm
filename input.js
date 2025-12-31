@@ -1,4 +1,4 @@
-let bot,parentPort,writeChar,writeText,offsetX,offsetY,width,height;
+let bot,parentPort,writeChar,writeText,offsetX,offsetY,width,height,reload;
 let hardResetCooldownStamp = Date.now();
 let softResetCooldownStamp = Date.now();
 let hardResetCooldown;
@@ -87,7 +87,7 @@ function chatMessage(e){
         if(command[0]=="<") return streamWrite("\x1b[D".repeat(command[1]??1))
         if(command[0]=="b" || command[0]=="backspace") return streamWrite("\x08".repeat(command[1]??1));
         if(command[0]=="d" || command[0]=="delete") return streamWrite("\x1b[3~".repeat(command[1]??1));
-        if(command[0]=="e"||command[0]=="enter") return streamWrite("\r");
+        if(command[0]=="e" || command[0]=="enter") return streamWrite("\r");
         if(command[0]=="es") return streamWrite(`\x1b`)
         if(command[0]=="f"||command[0][0]=="f"){
             let num = parseInt(command[0]=="f"?command[1]:command[0].slice(1));
@@ -125,10 +125,17 @@ Writing text to terminal:
             if(qmpPort) bot.chat(`Controlling the virtual machine:
 - hrs: Hard reset
 - rs, srs, reset: Soft reset`)
-            bot.chat(`Bot-specific:
-- h, help: Show this message.`)
+            bot.chat(`Misc.:
+- h, help: Show this message.
+- rl, reload: Reload the terminal`)
             return;
         }
+        if(command[0]=="rl" || command[0]=="reload"){
+            return reload().then(()=>{
+                bot.chat("Successfully reloaded the terminal.")
+            });
+        }
+
         chat("What does term:"+command[0]+" mean...?\n> For help, send \"term:h\".");
     }
 }
@@ -219,7 +226,7 @@ function onTileUpdate(e){
 }
 
 async function init(properties){
-    [bot,parentPort,writeChar,writeText,offsetX,offsetY,width,height] = properties;
+    [bot,parentPort,writeChar,writeText,offsetX,offsetY,width,height,reload] = properties;
 
     // init chatbot
     bot.on("chat",chatMessage);
