@@ -1,0 +1,27 @@
+{
+    // Bot-specific
+    token: "token.txt",     // File that contains a token of the user that the bot will log in to. Defaults to "token.txt". Make sure to keep this private!
+    displayName: "OWOTerm", // Display name that will show up everytime OWOTerm will send a message.
+    color: "#4996dd",       // Color in hex form (#rrggbb) that the name will have.
+
+    // QEMU VM
+    runExec: "/home/ponali/Documents/QEMU VMs/owot/run-serial.sh", // Command to run through sh. Must be a "qemu-system-*" command
+    qmpPort: 4445,                                                 // QMP TCP port opened by QEMU
+
+    // World settings
+    world: "guivostop",  // Name of the world where the terminal will be located
+    offsetX: 165,        // Where the terminal will be drawn in the world
+    offsetY: -35,
+
+    // Terminal settings
+    width: 110,                   // Size of the terminal
+    height: 28,
+    defaultbg: 0x000000,          // Default colors
+    defaultfg: 0xffffff,
+    loopscrolling: true,          // Whether to use "loopscrolling" (temporarily puts text at the top instead of scrolling)
+    loopscrollResetTimeout: 1000, // Amount of milliseconds to wait before removing the loopscrolling effect, if used
+
+    // Cooldowns
+    hardResetCooldown: 300000, // Max. time to wait before hard resetting the VM (1 min.)
+    softResetCooldown: 300000, // Max. time to wait before soft resetting the VM (1 min.)
+}
