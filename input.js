@@ -91,12 +91,17 @@ function chatMessage(e){
         if(command[0]=="es") return streamWrite(`\x1b`)
         if(command[0]=="f"||command[0][0]=="f"){
             let num = parseInt(command[0]=="f"?command[1]:command[0].slice(1));
+            if(num<1 || num>12){
+                return bot.chat("I don't know how to send that function key. Can you try one from F1 through F12 instead?");
+            }
             if(num<=4){
                 streamWrite("\x1bO"+String.fromCharCode(79+num));
             } else if(num==5){
                 streamWrite("\x1b[15~");
-            } else {
+            } else if(num<=10) {
                 streamWrite("\x1b["+(11+num)+"~");
+            } else if(num>10) {
+                streamWrite("\x1b["+(12+num)+"~");
             }
             return;
         }
@@ -119,7 +124,7 @@ Writing text to terminal:
 - c, ctrl: Press a letter with ctrl. Defaults to Ctrl+C.
 - e, enter: Press Enter.
 - es, escape: Press Escape.
-- f, f#: Press a function key (F1 through F10)
+- f, f#: Press a function key (F1 through F12)
 - pu, pd, p^, pv: Send Page Up or Page Down (repeatable)
 - t, tab: Press Tab.`)
             if(qmpPort) bot.chat(`Controlling the virtual machine:
