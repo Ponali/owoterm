@@ -5,6 +5,7 @@ const net = require('net'); // QMP
 let child;
 let buffer = "";
 let waitingRead = null;
+let crashed = false;
 
 function addToBuffer(data){
     buffer=buffer+data;
@@ -40,6 +41,7 @@ function onChildClose(code,signal){
         },2000)
     } else if (typeof(code)=="number" && code>0){
         addToBuffer("\r\n\x1b[0;33mQEMU VM instance has crashed. (code "+code+")\r\n")
+        crashed = true;
     } else {
         spawnChild();
     }
@@ -90,6 +92,7 @@ function softReset(){
 
 function quit(){
     return new Promise(resolve=>{
+        if(crashed) return resolve();
         onChildClose = resolve;
         softReset();
     })
