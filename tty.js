@@ -28,6 +28,12 @@ let visual;
 let alt = {};
 let alternativeBuffer = false;
 
+function sleep(n){
+    return new Promise(resolve=>{
+        setTimeout(resolve,n)
+    })
+}
+
 function createVisualBuffer(){
     return [...new Array(height)].map(a=>
         [...new Array(width)].map(a=>
