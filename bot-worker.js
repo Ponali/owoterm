@@ -33,6 +33,7 @@ function writeChar(x,y,c,fg,bg){
 
 async function handleMessage(m){
     if(m.type=="exit"){
+        await bot.flushWrites();
         return parentPort.postMessage({type:"exit"})
     }
 

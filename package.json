@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "json5": "^2.2.3",
-    "simple-owot-bot": "^3.2.0"
+    "simple-owot-bot": "^3.2.0",
+    "stringz": "^2.1.0"
   }
 }

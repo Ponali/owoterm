@@ -4,7 +4,7 @@ This is a terminal emulator for the [Our World of Text](https://ourworldoftext.c
 
 ![Screenshot of OWOTerm in action](images/screenshot.png)
 
-Keep in mind that this is in **work in progress**! Nothing is guaranteed to be stable, and some TUI programs (like [ttxtJS](https://github.com/Ponali/ttxtJS) as of writing this) will not display properly.
+Keep in mind that this is in **work in progress**! Nothing is guaranteed to be stable, and some TUI programs may not display properly.
 
 You might see that some characters on the themed fish shell from the screenshot aren't displaying properly: this is not a bug with OWOTerm, this is the fish shell theme expecting the terminal output to be able to render icons from a [Nerd font](https://www.nerdfonts.com/), which OWOT may not support.
 

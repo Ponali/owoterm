@@ -65,6 +65,8 @@ function handle(args,props){
         }
         return handle(args.slice(1),props);
     }
+
+    return handle(args.slice(1),props);
 }
 
 module.exports = handle;

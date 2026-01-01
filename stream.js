@@ -1,6 +1,7 @@
 let runExec,qmpPort;
 
 const {spawn,exec} = require('child_process');
+const {substr} = require('stringz');
 const net = require('net'); // QMP
 let child;
 let buffer = "";
@@ -51,8 +52,8 @@ function read(n){
     return new Promise(resolve=>{
         function attemptResolve(){
             if(buffer.length>=n){
-                const data = buffer.slice(0,n);
-                buffer=buffer.slice(n);
+                const data = substr(buffer,0,n);
+                buffer=substr(buffer,n);
                 resolve(data);
             }
         }
