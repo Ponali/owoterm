@@ -27,7 +27,8 @@ qemu-system-amd64 -enable-kvm \
 Clone this repository, and run `npm install` inside the new directory. Then edit the `settings.json5` file:
 
 - In "World settings", change `world` to the name of the world, and `offsetX` and `offsetY` to the X and Y values of the position of the terminal in the world respectively.
-- In "Terminal settings", change `width` and `height` to the width and height of the terminal respectively. Keep in mind that the program will take 5 more characters in height for the Text input dialog, and for the "Hard Reset" and "Soft Reset" buttons.
+- If you would like the Text input dialog or the power buttons to not show up, change `enableTextInputDialog` and `enablePowerButtons` to be `false`.
+- In "Terminal settings", change `width` and `height` to the width and height of the terminal respectively. Keep in mind that the program will take 5 more characters in height for the Text input dialog, and for the "Hard Reset" and "Soft Reset" buttons, unless you have it disabled.
 - In "QEMU VM", change `runExec` to the location of the shell script on your computer. If you set up QMP through a TCP port, change `qmpPort` to the number of said port.
 
 QMP access is required in order to find the QEMU process and kill it in order to hard reset, and also communicate to QEMU directly in order to soft reset (equivalent of pressing the power button on any ACPI-capable machine.)

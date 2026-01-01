@@ -3,6 +3,7 @@ let hardResetCooldownStamp = Date.now();
 let softResetCooldownStamp = Date.now();
 let hardResetCooldown;
 let softResetCooldown;
+let enableTextInputDialog,enablePowerButtons;
 let displayName = "OWOTerm";
 let chatColor = "#000000";
 
@@ -146,16 +147,24 @@ Writing text to terminal:
 }
 
 function drawTextArea(){
+    if(!enableTextInputDialog) return;
     const title = "┤ Text input ├";
     writeText(0,height+1,"╭"+"─".repeat(width-2-title.length)+title+"╮");
     writeText(0,height+2,"│"+" ".repeat(width-2)+"│");
     writeText(0,height+3,"╰"+"─".repeat(width-2)+"╯");
 }
 
+function powerButtonY(){
+    if(!enableTextInputDialog) return height;
+    return height+4;
+}
+
 function drawPowerButton(type){
+    if(!enablePowerButtons) return;
+    let baseY = powerButtonY();
     switch(type){
-        case 0:if(qmpPort) writeText(0,height+4,"⏻ Hard Reset",0x600000,0xaaaaaa);break;
-        case 1:if(qmpPort) writeText(13,height+4,"↻ Soft Reset",0x000000,0xaaaaaa);break;
+        case 0:if(qmpPort) writeText(0,baseY,"⏻ Hard Reset",0x600000,0xaaaaaa);break;
+        case 1:if(qmpPort) writeText(13,baseY,"↻ Soft Reset",0x000000,0xaaaaaa);break;
     }
 }
 
@@ -184,18 +193,20 @@ async function getTextInputValue(length){
 function cursorMove(channelID,hidden,x,y){
     if(hidden||typeof(x)!="number"||typeof(y)!="number") return;
     x-=offsetX;y-=offsetY;
-    if(y==height+3 && x>=1 && x<=width-1){
-        getTextInputValue(x==1?undefined:(x-1)).then(str=>{
-            if(x==1) str=str+"\n"
-            parentPort.postMessage({type:"streamWrite",str});
-            drawTextArea();
-        })
-    }
-    if(y==height+2 && x==width-1){
-        getTextInputValue(width-2).then(str=>{
-            parentPort.postMessage({type:"streamWrite",str});
-            drawTextArea();
-        })
+    if(enableTextInputDialog){
+        if(y==height+3 && x>=1 && x<=width-1){
+            getTextInputValue(x==1?undefined:(x-1)).then(str=>{
+                if(x==1) str=str+"\n"
+                    parentPort.postMessage({type:"streamWrite",str});
+                drawTextArea();
+            })
+        }
+        if(y==height+2 && x==width-1){
+            getTextInputValue(width-2).then(str=>{
+                parentPort.postMessage({type:"streamWrite",str});
+                drawTextArea();
+            })
+        }
     }
 }
 
@@ -207,11 +218,14 @@ let oldChars = {};
 
 function onCharChange(x,y,c,fg,bg){
     // console.log(`char change pos=${x},${y} c='${c}' fg=${fg.toString(16).padStart(6,"0")} bg=${bg.toString(16).padStart(6,"0")}`);
-    if(y==height+4 && x>=0 && x<12){
-        hardReset(); drawPowerButton(0);
-    }
-    if(y==height+4 && x>=13 && x<25){
-        softReset(); drawPowerButton(1);
+    let baseY = powerButtonY();
+    if(enablePowerButtons && y==baseY){
+        if(x>=0 && x<12){
+            hardReset(); drawPowerButton(0);
+        }
+        if(x>=13 && x<25){
+            softReset(); drawPowerButton(1);
+        }
     }
 }
 
@@ -276,7 +290,7 @@ function flagCharUpdated(x,y,c,fg,bg){
 }
 
 function settings(s){
-    ({hardResetCooldown,softResetCooldown,qmpPort,displayName,chatColor} = s); // why?????????
+    ({hardResetCooldown,softResetCooldown,enableTextInputDialog,enablePowerButtons,qmpPort,displayName,chatColor} = s); // why?????????
 }
 
 module.exports = {
