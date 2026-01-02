@@ -56,24 +56,24 @@ function writeCharToVisual(x,y,s,fg,bg){
     }
 }
 
-function writeText(x,y,s,fg,bg){
+function writeText(x,y,s,fg,bg,link){
     for(let i=0;i<s.length;i++){
         writeCharToVisual(x+i,y,s[i],fg,bg);
     }
     if(loopscrolling && y<height && y>=0){
         y=(y+loopscroll)%height;
     }
-    botWriteText(x,y,s,fg,bg);
+    botWriteText(x,y,s,fg,bg,link);
 }
 
-function writeChar(x,y,c,fg,bg,toVisual){
+function writeChar(x,y,c,fg,bg,link,toVisual){
     if(toVisual || toVisual===undefined){
         writeCharToVisual(x,y,c,fg,bg);
     }
     if(loopscrolling && y<height && y>=0){
         y=(y+loopscroll)%height;
     }
-    botWriteChar(x,y,c,fg,bg);
+    botWriteChar(x,y,c,fg,bg,link);
 }
 
 function indicateLoopScroll(){
@@ -153,7 +153,7 @@ function drawCursor(show){
     let b = char[2];
     // console.log("drawCursor",curx,cury,show,f,b);
     if(show) [f,b] = [b,f];
-    writeChar(curx,cury,char[0],f,b,false);
+    writeChar(curx,cury,char[0],f,b,undefined,false);
 }
 
 async function setCursor(x,y,scroll){ // absolute

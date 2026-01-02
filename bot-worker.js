@@ -1,6 +1,7 @@
 // NOTE: this file is a worker and runs in a different thread.
 const { parentPort } = require('worker_threads');
 
+let version;
 let world,width,height;
 let offsetX,offsetY;
 
@@ -15,20 +16,30 @@ function sleep(n){
     })
 }
 
-function writeText(x,y,s,fg,bg){
+function writeText(x,y,s,fg,bg,link){
     let ox = x+offsetX;
     let oy = y+offsetY;
     for(let i=0;i<s.length;i++){
         input.flagCharUpdated(ox+i,oy,s[i],fg,bg);
     }
     bot.writeText(ox,oy,s,fg,bg);
+    if(link){
+        bot.flushWrites(); // NOTE: normally this is asynchronous but this somehow doesn't return a promise so .then() doesn't work
+        for(let i=0;i<s.length;i++){
+            bot.urlLink(ox+i,oy,link);
+        }
+    }
 }
 
-function writeChar(x,y,c,fg,bg){
+function writeChar(x,y,c,fg,bg,link){
     let ox = x+offsetX;
     let oy = y+offsetY;
     input.flagCharUpdated(ox,oy,c,fg,bg);
     bot.writeChar(ox,oy,c,fg,bg);
+    if(link){
+        bot.flushWrites(); // see comment in writeText
+        bot.urlLink(ox,oy,link);
+    }
 }
 
 async function handleMessage(m){
@@ -45,7 +56,9 @@ async function handleMessage(m){
 let lastMessageTimestamp = Date.now();
 async function onConnect(){
     console.log("connected!");
-    // writeText(0,-1,"OWOTerm [WIP]");
+    let versionString = `OWOTerm ${version}`;
+    writeText(0,-1," ".repeat(width));
+    writeText(0,-1,versionString,0x808080,-1,"https://github.com/Ponali/owoterm");
     await tty.onConnect();
     await input.init([bot,parentPort,writeChar,writeText,offsetX,offsetY,width,height,tty.reload]);
     parentPort.postMessage({type:"ready"});
@@ -67,6 +80,7 @@ let messageQueue = [];
 
 parentPort.on("message",async (m)=>{
     if(m.type=="settings"){
+        version = m.version;
         ({world,width,height,offsetX,offsetY} = m.settings); // why???????????????????????
         input.settings(m.settings);
         const tokenFile = m.settings.token??"token.txt";

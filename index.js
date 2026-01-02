@@ -1,3 +1,5 @@
+const version = "[WIP]";
+
 const fs = require("node:fs");
 const json5 = require("json5");
 const settingsFile = process.argv[2]??"settings.json5";
@@ -9,7 +11,7 @@ const stream = require("./stream.js")(settings);
 
 const worker = new Worker('./bot-worker.js');
 // Worker.prototype.postMessage.call(worker,{type:"settings",settings}); // this SOMEHOW doesn't work unless if i do this
-worker.postMessage({type:"settings",settings})
+worker.postMessage({type:"settings",settings,version})
 
 async function parseChars(){
     const char = await stream.read(1);
