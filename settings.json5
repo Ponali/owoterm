@@ -22,8 +22,9 @@
     loopscrollResetTimeout: 1000, // Amount of milliseconds to wait before removing the loopscrolling effect, if used
 
     // Interface settings
-    enableTextInputDialog: true, // Whether to draw the "text input" that allows text to be entered through the world content.
-    enablePowerButtons: true,    // Whether to draw the power buttons (Hard Reset and Soft Reset buttons)
+    enableTextInputDialog: true,     // Whether to draw the "text input" that allows text to be entered through the world content.
+    enablePowerButtons: true,        // Whether to draw the power buttons (Hard Reset and Soft Reset buttons)
+    enableLoopscrolIndicator: true,  // Whether to draw the loopscroll indicator, which is to the right of the terminal.
 
     // Cooldowns
     hardResetCooldown: 300000, // Max. time to wait before hard resetting the VM (1 min.)
