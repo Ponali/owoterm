@@ -6,7 +6,20 @@ This is a terminal emulator for the [Our World of Text](https://ourworldoftext.c
 
 Keep in mind that this is in **work in progress**! Nothing is guaranteed to be stable, and some TUI programs may not display properly.
 
-You might see that some characters on the themed fish shell from the screenshot aren't displaying properly: this is not a bug with OWOTerm, this is the fish shell theme expecting the terminal output to be able to render icons from a [Nerd font](https://www.nerdfonts.com/), which OWOT may not support.
+## Notice on Nerd fonts
+Some programs like the Fish shell on the [Tide theme](https://github.com/IlanCosman/tide), or [Neovim](https://neovim.io/) paired with [Lazyvim](https://www.lazyvim.org/), use characters that are only available on a [Nerd font](https://www.nerdfonts.com/): they are supposed to be icons, but inside of vanilla OWOT, they will show up as if it was an invalid character (most likely a [tofu](https://fonts.google.com/knowledge/glossary/tofu), e.g. empty box, or a box with the character's code point in Linux).
+
+This is only a problem with OWOT, not OWOTerm. The character code points are the same as in the terminal app's output, and OWOTerm has full Unicode support though [stringz](https://www.npmjs.com/package/stringz).
+
+---
+
+In order to fix these characters from displaying incorrectly, you'll first need to [install a pre-packaged nerd font](https://www.nerdfonts.com/font-downloads) on your computer. The font you will choose doesn't matter, since any one of them should have all the icons. Afterwards, you will need to load the font in OWOT, by going to the DevTools console (press Ctrl+Shift+I, then go to the Console tab in the new window). Inside the console, paste this:
+```
+w.changeFont(fontTemplate+", 'Hack Nerd Font'")`
+```
+then replace `Hack Nerd Font` with the name of the nerd font that you have installed.
+
+If you don't want to open the DevTools console everytime you open OWOT, you can automate it through [Tampermonkey](https://www.tampermonkey.net/). Create a new script, set `@match` to `https://ourworldoftext.com/*`, then replace `// Your code here...` with the code that you would normally insert in DevTools. Then click on File -> Save (or press Ctrl-S), and everything should be set up normally.
 
 ## Setting up
 
