@@ -3,7 +3,7 @@ let hardResetCooldownStamp = Date.now();
 let softResetCooldownStamp = Date.now();
 let hardResetCooldown;
 let softResetCooldown;
-let enableTextInputDialog,enablePowerButtons;
+let showTextInputDialog,showPowerButtons;
 let displayName = "OWOTerm";
 let chatColor = "#000000";
 
@@ -147,7 +147,7 @@ Writing text to terminal:
 }
 
 function drawTextArea(){
-    if(!enableTextInputDialog) return;
+    if(!showTextInputDialog) return;
     const title = "┤ Text input ├";
     writeText(0,height+1,"╭"+"─".repeat(width-2-title.length)+title+"╮");
     writeText(0,height+2,"│"+" ".repeat(width-2)+"│");
@@ -155,12 +155,12 @@ function drawTextArea(){
 }
 
 function powerButtonY(){
-    if(!enableTextInputDialog) return height;
+    if(!showTextInputDialog) return height;
     return height+4;
 }
 
 function drawPowerButton(type){
-    if(!enablePowerButtons) return;
+    if(!showPowerButtons) return;
     let baseY = powerButtonY();
     switch(type){
         case 0:if(qmpPort) writeText(0,baseY,"⏻ Hard Reset",0x600000,0xaaaaaa);break;
@@ -193,7 +193,7 @@ async function getTextInputValue(length){
 function cursorMove(channelID,hidden,x,y){
     if(hidden||typeof(x)!="number"||typeof(y)!="number") return;
     x-=offsetX;y-=offsetY;
-    if(enableTextInputDialog){
+    if(showTextInputDialog){
         if(y==height+3 && x>=1 && x<=width-1){
             getTextInputValue(x==1?undefined:(x-1)).then(str=>{
                 if(x==1) str=str+"\n"
@@ -219,7 +219,7 @@ let oldChars = {};
 function onCharChange(x,y,c,fg,bg){
     // console.log(`char change pos=${x},${y} c='${c}' fg=${fg.toString(16).padStart(6,"0")} bg=${bg.toString(16).padStart(6,"0")}`);
     let baseY = powerButtonY();
-    if(enablePowerButtons && y==baseY){
+    if(showPowerButtons && y==baseY){
         if(x>=0 && x<12){
             hardReset(); drawPowerButton(0);
         }
@@ -290,7 +290,7 @@ function flagCharUpdated(x,y,c,fg,bg){
 }
 
 function settings(s){
-    ({hardResetCooldown,softResetCooldown,enableTextInputDialog,enablePowerButtons,qmpPort,displayName,chatColor} = s); // why?????????
+    ({hardResetCooldown,softResetCooldown,showTextInputDialog,showPowerButtons,qmpPort,displayName,chatColor} = s); // why?????????
 }
 
 module.exports = {

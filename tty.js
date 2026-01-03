@@ -5,7 +5,7 @@ let width;
 let height;
 let loopscrolling;
 let loopscrollResetTimeout;
-let enableLoopscrolIndicator;
+let showLoopscrollIndicator;
 let defaultbg;
 let defaultfg;
 
@@ -78,7 +78,7 @@ function writeChar(x,y,c,fg,bg,link,toVisual){
 }
 
 function indicateLoopScroll(){
-    if(!enableLoopscrolIndicator) return;
+    if(!showLoopscrollIndicator) return;
     const color = loopscroll==0?0x00ff00:0x000040;
     writeChar(width+1,0,"┐",color);
     for(let i=1;i<height-1;i++){
@@ -458,7 +458,7 @@ function init(b,pp,wc,wt,s){
     parentPort = pp;
     botWriteChar = wc;
     botWriteText = wt;
-    ({width,height,loopscrolling,loopscrollResetTimeout,enableLoopscrolIndicator,defaultbg,defaultfg} = s); // WHYYYYYY??????!!§??§???!§§???????
+    ({width,height,loopscrolling,loopscrollResetTimeout,showLoopscrollIndicator,defaultbg,defaultfg} = s); // WHYYYYYY??????!!§??§???!§§???????
     visual = createVisualBuffer();
     alt.visual = createVisualBuffer();
     scrollRegionBot = height-1;
