@@ -36,7 +36,7 @@ function softReset(){
     if(softResetCooldownStamp+softResetCooldown>Date.now()){
         chat(`Please wait ${Math.floor((softResetCooldownStamp+softResetCooldown-Date.now())/1000)} seconds before soft resetting the virtual machine.`)
     } else {
-        hardResetCooldownStamp=Date.now();
+        softResetCooldownStamp=Date.now();
         parentPort.postMessage({type:"softReset"});
     }
 }
