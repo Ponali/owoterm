@@ -28,6 +28,7 @@
     showVersion: true,              // Whether to draw the version above the terminal.
     versionFormat: "OWOTerm %v",    // Version format to use when displaying the version.
                                     // %v: Version string
+    showNerdFontHyperlink: true,    // Show a link to the GitHub README's "Notice on Nerd fonts" page
 
     // Cooldowns
     hardResetCooldown: 300000, // Max. time to wait before hard resetting the VM (1 min.)

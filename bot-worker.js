@@ -4,7 +4,7 @@ const { parentPort } = require('worker_threads');
 let version;
 let world,width,height;
 let offsetX,offsetY;
-let showVersion;
+let showVersion,showNerdFontHyperlink;
 
 const owot = require("simple-owot-bot");
 let bot;
@@ -58,9 +58,14 @@ let lastMessageTimestamp = Date.now();
 async function onConnect(){
     console.log("connected!");
     if(showVersion){
+        let mainColor = 0x808080;
         let versionString = versionFormat.replace("%v",version);
         writeText(0,-1," ".repeat(width));
-        writeText(0,-1,versionString,0x808080,-1,"https://github.com/Ponali/owoterm");
+        writeText(0,-1,versionString,mainColor,-1,"https://github.com/Ponali/owoterm");
+        if(showNerdFontHyperlink){
+            writeChar(versionString.length+1,-1,"·",mainColor);
+            writeText(versionString.length+3,-1,"Notice on Nerd fonts",mainColor,-1,"https://github.com/Ponali/owoterm#notice-on-nerd-fonts");
+        }
     }
     await tty.onConnect();
     await input.init([bot,parentPort,writeChar,writeText,offsetX,offsetY,width,height,tty.reload]);
@@ -84,7 +89,7 @@ let messageQueue = [];
 parentPort.on("message",async (m)=>{
     if(m.type=="settings"){
         version = m.version;
-        ({world,width,height,offsetX,offsetY,showVersion,versionFormat} = m.settings); // why???????????????????????
+        ({world,width,height,offsetX,offsetY,showVersion,versionFormat,showNerdFontHyperlink} = m.settings); // why???????????????????????
         input.settings(m.settings);
         const tokenFile = m.settings.token??"token.txt";
         console.log("reading token from file",tokenFile);
