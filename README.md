@@ -51,3 +51,18 @@ You will need to create a `token.txt` file with the token string in order to log
 After all of these steps, you should normally be able to run OWOTerm by running `node index` in the project directory.
 
 If you would like to rename the settings file, make sure you run the program by running `node index [settingsFile]` instead.
+
+## Definition of "loopscrolling"
+
+You might see a lot of mentions of "loopscrolling" in the source code, or the config file (`settings.json5`).
+Scrolling normally, i.e. copying the entire buffer one line higher, is slow and may be heavily impacted by desyncs. With loopscrolling enabled, the buffer will only be copied internally, but won't be updated in OWOT. The cursor will move to the top of the terminal canvas, then move down, and loop back up if it scrolls far enough. This is particularily helpful for cases where huge amounts of scrolling are required, like systemd logs.
+
+| Loopscrolling enabled | Loopscrolling disabled |
+| --------------------- | ---------------------- |
+| ![OWOTerm with Loopscrolling enabled](images/with-loopscrolling.webp) | ![OWOTerm with Loopscrolling disabled](images/without-loopscrolling.webp) |
+| Instead of copying every line in the canvas, it moves and tiles the buffer on the canvas, causing this looping effect. Since it doesn't have to re-draw the lines this way, it is much more faster. | Every line from the canvas is copied when the terminal scrolls, and due to the many requests it sends to the server, it desyncs, and needs manual request from the user to reload the terminal (`term:rl`). |
+| OWOTerm shows the Arch boot logs much faster, and is able to show the fish shell the terminal resolution. | OWOTerm is not fast enough to show the terminal resolution to the fish shell, due to fish's request being far back in the buffer due to the systemd logs. Because of this, the shell throws an error and assumes the terminal's resolution uses 80 columns. |
+
+The loopscrolling effect is only temporary. If the currently opened program or shell doesn't send anything to OWOTerm for 1 second (configurable with `loopscrollResetTimeout`), the terminal will reload and show the lines in the correct order.
+
+Please note that loopscrolling will not occur when the program sets a custom scrolling margin (which is most likely a text editor), loopscrolling will not occur, regardless of the `loopscrolling` config setting.
