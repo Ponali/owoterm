@@ -196,7 +196,7 @@ function cursorMove(channelID,hidden,x,y){
     if(showTextInputDialog){
         if(y==height+3 && x>=1 && x<=width-1){
             getTextInputValue(x==1?undefined:(x-1)).then(str=>{
-                if(x==1) str=str+"\n"
+                if(x==1) str=str+"\r"
                     parentPort.postMessage({type:"streamWrite",str});
                 drawTextArea();
             })

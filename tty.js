@@ -408,6 +408,9 @@ async function handleMessage(m){
     if(m.type=="return"){
         setCursor(0,cury,false);
     }
+    if(m.type=="tab"){
+        setCursor(Math.floor(curx/8+1)*8,cury,false);
+    }
     if(m.type=="char"){
         await drawChar(m.char);
     }

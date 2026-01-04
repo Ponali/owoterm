@@ -86,6 +86,8 @@ async function parseChars(){
         worker.postMessage({type:"newline"});
     } else if(char=="\r"){
         worker.postMessage({type:"return"});
+    } else if(char=="\t"){
+        worker.postMessage({type:"tab"});
     } else if(char=="\x08"){
         worker.postMessage({type:"backspace"});
     } else if(char.charCodeAt()<32){
