@@ -4,6 +4,7 @@ const { parentPort } = require('worker_threads');
 let version;
 let world,width,height;
 let offsetX,offsetY;
+let showVersion;
 
 const owot = require("simple-owot-bot");
 let bot;
@@ -56,9 +57,11 @@ async function handleMessage(m){
 let lastMessageTimestamp = Date.now();
 async function onConnect(){
     console.log("connected!");
-    let versionString = `OWOTerm ${version}`;
-    writeText(0,-1," ".repeat(width));
-    writeText(0,-1,versionString,0x808080,-1,"https://github.com/Ponali/owoterm");
+    if(showVersion){
+        let versionString = `OWOTerm ${version}`;
+        writeText(0,-1," ".repeat(width));
+        writeText(0,-1,versionString,0x808080,-1,"https://github.com/Ponali/owoterm");
+    }
     await tty.onConnect();
     await input.init([bot,parentPort,writeChar,writeText,offsetX,offsetY,width,height,tty.reload]);
     parentPort.postMessage({type:"ready"});
@@ -81,7 +84,7 @@ let messageQueue = [];
 parentPort.on("message",async (m)=>{
     if(m.type=="settings"){
         version = m.version;
-        ({world,width,height,offsetX,offsetY} = m.settings); // why???????????????????????
+        ({world,width,height,offsetX,offsetY,showVersion} = m.settings); // why???????????????????????
         input.settings(m.settings);
         const tokenFile = m.settings.token??"token.txt";
         console.log("reading token from file",tokenFile);

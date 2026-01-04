@@ -25,6 +25,7 @@
     showTextInputDialog: true,      // Whether to draw the "text input" that allows text to be entered through the world content.
     showPowerButtons: true,         // Whether to draw the power buttons (Hard Reset and Soft Reset buttons)
     showLoopscrollIndicator: true,  // Whether to draw the loopscroll indicator, which is to the right of the terminal.
+    showVersion: true,              // Whether to draw the version above the terminal.
 
     // Cooldowns
     hardResetCooldown: 300000, // Max. time to wait before hard resetting the VM (1 min.)
