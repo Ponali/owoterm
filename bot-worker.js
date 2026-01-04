@@ -58,7 +58,7 @@ let lastMessageTimestamp = Date.now();
 async function onConnect(){
     console.log("connected!");
     if(showVersion){
-        let versionString = `OWOTerm ${version}`;
+        let versionString = versionFormat.replace("%v",version);
         writeText(0,-1," ".repeat(width));
         writeText(0,-1,versionString,0x808080,-1,"https://github.com/Ponali/owoterm");
     }
@@ -84,7 +84,7 @@ let messageQueue = [];
 parentPort.on("message",async (m)=>{
     if(m.type=="settings"){
         version = m.version;
-        ({world,width,height,offsetX,offsetY,showVersion} = m.settings); // why???????????????????????
+        ({world,width,height,offsetX,offsetY,showVersion,versionFormat} = m.settings); // why???????????????????????
         input.settings(m.settings);
         const tokenFile = m.settings.token??"token.txt";
         console.log("reading token from file",tokenFile);
