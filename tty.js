@@ -369,33 +369,35 @@ async function handleMessage(m){
                     bgcolor=defaultbg;
                     invert=false;
                     return; break;
+                default:console.error("CSI final char. '"+m.final+"' not supported (code: "+m.code.join(",")+", special)");break;
             }
-        }
-        switch(m.final){
-            case "A": v=Math.max(m.code[0],1); moveCursor( 0,-v);break;
-            case "B": v=Math.max(m.code[0],1); moveCursor( 0, v);break;
-            case "C": v=Math.max(m.code[0],1); moveCursor( v, 0);break;
-            case "D": v=Math.max(m.code[0],1); moveCursor(-v, 0);break;
-            case "E": setCursor(0,cury+Math.max(m.code[0],1),false);break;
-            case "F": setCursor(0,cury-Math.max(m.code[0],1),false);break;
-            case "G": setCursor(m.code[0]-1,cury,false);break;
-            case "H": case "f": await setCursor(m.code[1]-1,m.code[0]-1);break;
-            case "J": eraseInDisplay(m.code[0]);break;
-            case "K": eraseInLine(m.code[0]);break;
-            case "L": await insertLines(Math.max(m.code[0],1));break;
-            case "M": await deleteLines(Math.max(m.code[0],1));break;
-            case "P": deleteCharacters(m.code[0]);break;
-            case "S": await scrollDown(Math.max(m.code[0],1));break;
-            case "T": await scrollUp(Math.max(m.code[0],1));break;
-            case "X": writeText(curx,cury," ".repeat(Math.max(m.code[0],1)),fgcolor,bgcolor);break;
-            case "c": parentPort.postMessage({type:"streamWrite",str:primaryDeviceAttributes});break;
-            case "d": setCursor(curx,m.code[0]-1,false);break;
-            case "m": sgr(m.code,[invert,fgcolor,bgcolor,a=>{fgcolor=a??defaultfg},a=>{bgcolor=a??defaultbg},a=>{invert=a}]);break;
-            case "n": if(m.code[0]==6){deviceStatusReport();};break;
-            case "r": setMargin(m.code);break;
-            // TODO: implement alternative buffer
-            // TODO: implement "p" (?)
-            default:console.error("CSI final char. '"+m.final+"' not supported (code: "+m.code.join(",")+", s="+m.special+")");break;
+        } else {
+            switch(m.final){
+                case "A": v=Math.max(m.code[0],1); moveCursor( 0,-v);break;
+                case "B": v=Math.max(m.code[0],1); moveCursor( 0, v);break;
+                case "C": v=Math.max(m.code[0],1); moveCursor( v, 0);break;
+                case "D": v=Math.max(m.code[0],1); moveCursor(-v, 0);break;
+                case "E": setCursor(0,cury+Math.max(m.code[0],1),false);break;
+                case "F": setCursor(0,cury-Math.max(m.code[0],1),false);break;
+                case "G": setCursor(m.code[0]-1,cury,false);break;
+                case "H": case "f": await setCursor(m.code[1]-1,m.code[0]-1);break;
+                case "J": eraseInDisplay(m.code[0]);break;
+                case "K": eraseInLine(m.code[0]);break;
+                case "L": await insertLines(Math.max(m.code[0],1));break;
+                case "M": await deleteLines(Math.max(m.code[0],1));break;
+                case "P": deleteCharacters(m.code[0]);break;
+                case "S": await scrollDown(Math.max(m.code[0],1));break;
+                case "T": await scrollUp(Math.max(m.code[0],1));break;
+                case "X": writeText(curx,cury," ".repeat(Math.max(m.code[0],1)),fgcolor,bgcolor);break;
+                case "c": parentPort.postMessage({type:"streamWrite",str:primaryDeviceAttributes});break;
+                case "d": setCursor(curx,m.code[0]-1,false);break;
+                case "m": sgr(m.code,[invert,fgcolor,bgcolor,a=>{fgcolor=a??defaultfg},a=>{bgcolor=a??defaultbg},a=>{invert=a}]);break;
+                case "n": if(m.code[0]==6){deviceStatusReport();};break;
+                case "r": setMargin(m.code);break;
+                // TODO: implement alternative buffer
+                // TODO: implement "p" (?)
+                default:console.error("CSI final char. '"+m.final+"' not supported (code: "+m.code.join(",")+", not special)");break;
+            }
         }
     }
     if(m.type=="newline"){
@@ -428,10 +430,16 @@ async function handleMessage(m){
         curx = curxSave;
         cury = curySave;
     }
-    if(m.type=="status"){
-        // console.log(m.args)
-        if(m.args.includes("type==shell")){
-            await resetLoopScroll();
+    if(m.type=="osc"){
+        let {operation,code} = m;
+        if(operation==104){
+            stream.unshift(code.split("\x07")[1]);
+        }
+        if(operation==3008){
+            const args = code.split(";").slice(1);
+            if(code.includes("type==shell")){
+                await resetLoopScroll();
+            }
         }
     }
 }
