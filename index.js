@@ -1,4 +1,4 @@
-const version = "[WIP]";
+const version = "1.0.0";
 
 const fs = require("node:fs");
 const json5 = require("json5");
@@ -59,7 +59,7 @@ async function parseChars(){
             while(code.slice(-2)!="\x1b\\" && (code.at(-1)??" ")!="\x9C"){
                 code=code+(await stream.read(1));
             }
-            console.error(`ANSI DCS: ${JSON.stringify(code)}`)
+            // console.error(`ANSI DCS: ${JSON.stringify(code)}`)
         } else if(header=="("){
             // i don't know any program that uses anything else than UTF-8 or ASCII on the terminal
             await stream.read(1);
@@ -118,7 +118,7 @@ worker.on('message',(msg)=>{
 });
 
 process.on('SIGINT',function(){
-    console.log("stopping...");
+    console.log("\r\x1b[2Kstopping...");
     stream.quit().then(()=>{
         worker.postMessage({type:"exit"});
     })

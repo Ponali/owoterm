@@ -83,8 +83,17 @@ async function onConnect(){
         // console.error(messageQueue.length,cursorShown);
     }
 }
-
 let messageQueue = [];
+
+let token;
+function spawnBot(){
+    bot = new owot.Bot(`wss://ourworldoftext.com/${world}/ws/?hide=1`,token);
+    bot.on("connected",onConnect);
+    bot.on("disconnected",function(){
+        console.warn("warning: bot got disconnected")
+        spawnBot();
+    })
+}
 
 parentPort.on("message",async (m)=>{
     if(m.type=="settings"){
@@ -93,15 +102,12 @@ parentPort.on("message",async (m)=>{
         input.settings(m.settings);
         const tokenFile = m.settings.token??"token.txt";
         console.log("reading token from file",tokenFile);
-        let token;
         try{
             token = require('node:fs').readFileSync(tokenFile,"utf8").replaceAll("\n","");
         } catch (e){
             console.error("cannot read token file, trying to log in as a guest.",e)
         }
-
-        bot = new owot.Bot(`wss://ourworldoftext.com/${world}/ws/?hide=1`,token);
-        bot.on("connected",onConnect);
+        spawnBot();
 
         tty.init(bot,parentPort,writeChar,writeText,m.settings);
     } else {

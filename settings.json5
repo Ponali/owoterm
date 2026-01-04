@@ -26,7 +26,7 @@
     showPowerButtons: true,         // Whether to draw the power buttons (Hard Reset and Soft Reset buttons)
     showLoopscrollIndicator: true,  // Whether to draw the loopscroll indicator, which is to the right of the terminal.
     showVersion: true,              // Whether to draw the version above the terminal.
-    versionFormat: "OWOTerm %v",    // Version format to use when displaying the version.
+    versionFormat: "OWOTerm v%v",   // Version format to use when displaying the version.
                                     // %v: Version string
     showNerdFontHyperlink: true,    // Show a link to the GitHub README's "Notice on Nerd fonts" page
 

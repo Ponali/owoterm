@@ -37,7 +37,7 @@ qemu-system-amd64 -enable-kvm \
     -nographic -serial stdio
 ```
 
-Clone this repository, and run `npm install` inside the new directory. Then edit the `settings.json5` file:
+Go to this repository's [Releases page](https://github.com/Ponali/owoterm/releases), download an archive of the source code for the latest version, and extract it somewhere. Open your terminal and run `npm install` inside the new directory. Then edit the `settings.json5` file:
 
 - In "World settings", change `world` to the name of the world, and `offsetX` and `offsetY` to the X and Y values of the position of the terminal in the world respectively.
 - If you would like the Text input dialog or the power buttons to not show up, change `enableTextInputDialog` and `enablePowerButtons` to be `false`.

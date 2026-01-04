@@ -314,7 +314,7 @@ function setMargin(code){
     scrollRegionTop=Math.max(Math.min(code[0],height)-1,0);
     scrollRegionBot=Math.max(Math.min(code[1],height)-1,0);
     if(scrollRegionBot==0){ scrollRegionBot=height-1; }
-    console.log(`set margin to ${scrollRegionTop},${scrollRegionBot} (real=${code.slice(0,2).join(",")})`);
+    // console.log(`set margin to ${scrollRegionTop},${scrollRegionBot} (real=${code.slice(0,2).join(",")})`);
 }
 
 function special(type,enable){
@@ -348,7 +348,7 @@ function special(type,enable){
         }
         alternativeBuffer = enable;
     }
-    console.error(`special ${enable?"enable":"disable"} ${type}`);
+    // console.error(`special ${enable?"enable":"disable"} ${type}`);
 }
 
 async function handleMessage(m){
@@ -426,7 +426,7 @@ async function handleMessage(m){
         cury = curySave;
     }
     if(m.type=="status"){
-        console.log(m.args)
+        // console.log(m.args)
         if(m.args.includes("type==shell")){
             await resetLoopScroll();
         }
