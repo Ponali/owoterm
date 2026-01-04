@@ -4,8 +4,6 @@ This is a terminal emulator for the [Our World of Text](https://ourworldoftext.c
 
 ![Screenshot of OWOTerm in action](images/screenshot.png)
 
-Keep in mind that this is in **work in progress**! Nothing is guaranteed to be stable, and some TUI programs may not display properly.
-
 ## Notice on Nerd fonts
 Some programs like the Fish shell on the [Tide theme](https://github.com/IlanCosman/tide), or [Neovim](https://neovim.io/) paired with [Lazyvim](https://www.lazyvim.org/), use characters that are only available on a [Nerd font](https://www.nerdfonts.com/): they are supposed to be icons, but inside of vanilla OWOT, they will show up as if it was an invalid character (most likely a [tofu](https://fonts.google.com/knowledge/glossary/tofu), e.g. empty box, or a box with the character's code point in Linux).
 
