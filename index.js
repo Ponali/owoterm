@@ -44,7 +44,11 @@ async function parseChars(){
             while(code.slice(-2)!="\x1b\\" && (code.at(-1)??" ")!="\x07" && (code.at(-1)??" ")!="\x9C"){
                 code=code+(await stream.read(1));
             }
-            code=code.slice(0,-2)
+            if(code.slice(-2)=="\x1b\\"){
+                code=code.slice(0,-2);
+            } else {
+                code=code.slice(0,-1);
+            }
             let operation=parseInt(code.split("\x07")[0]);
             // console.error(`ANSI OSC: ${JSON.stringify(code)}, type ${type}`)
             worker.postMessage({type:"osc",operation,code});
@@ -97,6 +101,9 @@ async function parseChars(){
 worker.on('message',(msg)=>{
     if(msg.type=="streamWrite"){
         stream.write(msg.str);
+    }
+    if(msg.type=="streamUnshift"){
+        stream.unshift(msg.str);
     }
     if(msg.type=="hardReset") stream.hardReset();
     if(msg.type=="softReset") stream.softReset();

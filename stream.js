@@ -105,6 +105,7 @@ module.exports = function(s){
     return {
         read,
         write:(data)=>{child.stdin.write(data);},
+        unshift,
         hardReset,softReset,quit
     };
 }

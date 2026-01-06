@@ -18,6 +18,7 @@ let cury = 0;
 let wrapSkip = false;
 let curVisible = true;
 let loopscroll = 0;
+let hyperlink = undefined;
 
 let curxSave = 0;
 let curySave = 0;
@@ -38,7 +39,7 @@ function sleep(n){
 function createVisualBuffer(){
     return [...new Array(height)].map(a=>
         [...new Array(width)].map(a=>
-            [" ",fgcolor,bgcolor]
+            [" ",fgcolor,bgcolor,undefined]
         )
     )
 }
@@ -51,15 +52,15 @@ function copyBuffer(bufA,bufB){
     }
 }
 
-function writeCharToVisual(x,y,s,fg,bg){
+function writeCharToVisual(x,y,s,fg,bg,link){
     if(x>=0 && y>=0 && x<width && y<height){
-        visual[y][x] = [s,fg,bg];
+        visual[y][x] = [s,fg,bg,link];
     }
 }
 
 function writeText(x,y,s,fg,bg,link){
     for(let i=0;i<s.length;i++){
-        writeCharToVisual(x+i,y,s[i],fg,bg);
+        writeCharToVisual(x+i,y,s[i],fg,bg,link);
     }
     if(loopscrolling && y<height && y>=0){
         y=(y+loopscroll)%height;
@@ -69,7 +70,7 @@ function writeText(x,y,s,fg,bg,link){
 
 function writeChar(x,y,c,fg,bg,link,toVisual){
     if(toVisual || toVisual===undefined){
-        writeCharToVisual(x,y,c,fg,bg);
+        writeCharToVisual(x,y,c,fg,bg,link);
     }
     if(loopscrolling && y<height && y>=0){
         y=(y+loopscroll)%height;
@@ -197,9 +198,9 @@ async function drawChar(char){
             await scrollDown(cury+1-scrollRegionBot);
             cury=scrollRegionBot-1;
         }
-        writeChar(0,cury+1,char,fgcolor,bgcolor);
+        writeChar(0,cury+1,char,fgcolor,bgcolor,hyperlink);
     } else {
-        writeChar(curx,cury,char,fgcolor,bgcolor);
+        writeChar(curx,cury,char,fgcolor,bgcolor,hyperlink);
     }
     await moveCursorText(1);
 }
@@ -296,7 +297,7 @@ async function reload(){
     for(let y=0;y<height;y++){
         for(let x=0;x<width;x++){
             const char = visual[y][x];
-            writeChar(x,y,char[0],char[1],char[2]);
+            writeChar(x,y,char[0],char[1],char[2],char[3]);
         }
         await bot.flushWrites();
     }
@@ -432,8 +433,15 @@ async function handleMessage(m){
     }
     if(m.type=="osc"){
         let {operation,code} = m;
+        if(operation==8){
+            hyperlink=code.split(";")[2];
+            if(hyperlink=="") hyperlink=undefined;
+        }
         if(operation==104){
-            stream.unshift(code.split("\x07")[1]);
+            let str=code.split("\x07")[1];
+            if(str!==undefined){
+                parentPort.postMessage({type:"streamUnshift",str})
+            }
         }
         if(operation==3008){
             const args = code.split(";").slice(1);
