@@ -9,13 +9,13 @@
     qmpPort: 4445,                                                 // QMP TCP port opened by QEMU
 
     // World settings
-    world: "guivostop",  // Name of the world where the terminal will be located
-    offsetX: 165,        // Where the terminal will be drawn in the world
-    offsetY: -35,
+    world: "owoterm", // Name of the world where the terminal will be located
+    offsetX: -80,     // Where the terminal will be drawn in the world
+    offsetY: -26,
 
     // Terminal settings
-    width: 110,                   // Size of the terminal
-    height: 28,
+    width: 160,                   // Size of the terminal
+    height: 52,
     defaultbg: 0x000000,          // Default colors
     defaultfg: 0xffffff,
     loopscrolling: true,          // Whether to use "loopscrolling" (temporarily puts text at the top instead of scrolling)
