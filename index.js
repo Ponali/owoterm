@@ -1,4 +1,4 @@
-const version = "1.0.0";
+const version = "1.1.0";
 
 const fs = require("node:fs");
 const json5 = require("json5");
