@@ -4,6 +4,15 @@ This is a terminal emulator for the [Our World of Text](https://ourworldoftext.c
 
 ![Screenshot of OWOTerm in action](images/screenshot.png)
 
+| ![Neovim/Lazyvim](images/lazyvim.png) | ![asciiquarium](images/asciiquarium.png) |
+|---|---|
+| ![pipes.sh](images/pipes.png) | ![teletext through ttxtJS](images/teletext.png) |
+
+
+As of version v1.1.0, OWOTerm started supporting hyperlinks:
+
+![Showing a hyperlink inside of OWOTerm](images/hyperlink.png)
+
 ## Notice on Nerd fonts
 Some programs like the Fish shell on the [Tide theme](https://github.com/IlanCosman/tide), or [Neovim](https://neovim.io/) paired with [Lazyvim](https://www.lazyvim.org/), use characters that are only available on a [Nerd font](https://www.nerdfonts.com/): they are supposed to be icons, but inside of vanilla OWOT, they will show up as if it was an invalid character (most likely a [tofu](https://fonts.google.com/knowledge/glossary/tofu), e.g. empty box, or a box with the character's code point in Linux).
 
