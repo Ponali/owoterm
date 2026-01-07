@@ -397,7 +397,7 @@ async function handleMessage(m){
                 case "r": setMargin(m.code);break;
                 // TODO: implement alternative buffer
                 // TODO: implement "p" (?)
-                default:console.error("CSI final char. '"+m.final+"' not supported (code: "+m.code.join(",")+", not special)");break;
+                default:console.error(`CSI final char. '${m.final}' not supported (code: ${m.code.join(",")}, not special)`);break;
             }
         }
     }
@@ -436,18 +436,18 @@ async function handleMessage(m){
         if(operation==8){
             hyperlink=code.split(";")[2];
             if(hyperlink=="") hyperlink=undefined;
-        }
-        if(operation==104){
+        } else if (operation==104){
             let str=code.split("\x07")[1];
             if(str!==undefined){
                 parentPort.postMessage({type:"streamUnshift",str})
             }
-        }
-        if(operation==3008){
+        } else if (operation==3008){
             const args = code.split(";").slice(1);
             if(code.includes("type==shell")){
                 await resetLoopScroll();
             }
+        } else {
+            console.error(`OSC type ${operation} not supported`);
         }
     }
 }
