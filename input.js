@@ -42,6 +42,7 @@ function softReset(){
 }
 
 function chatMessage(e){
+    if(e.location!="page") return;
     /*
      * e = {
      *  id: 9005,
@@ -59,6 +60,9 @@ function chatMessage(e){
      *  rankName: undefined,
      *  rankColor: undefined
      * } */
+    if(whitelist && whitelist.length>0 && !whitelist.includes(e.realUsername)) return;
+    if(blacklist && blacklist.includes(e.realUsername)) return;
+    if(ignoreGuests && !e.registered) return;
     if(e.message.startsWith("term:")){
         let command = e.message.slice(5).split(" ");
         if(command[0]=="c"){
@@ -290,7 +294,7 @@ function flagCharUpdated(x,y,c,fg,bg){
 }
 
 function settings(s){
-    ({hardResetCooldown,softResetCooldown,showTextInputDialog,showPowerButtons,qmpPort,displayName,chatColor} = s); // why?????????
+    ({hardResetCooldown,softResetCooldown,showTextInputDialog,showPowerButtons,qmpPort,displayName,chatColor,whitelist,blacklist,ignoreGuests} = s); // why?????????
 }
 
 module.exports = {

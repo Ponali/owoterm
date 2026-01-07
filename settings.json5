@@ -21,7 +21,7 @@
     loopscrolling: true,          // Whether to use "loopscrolling" (temporarily puts text at the top instead of scrolling)
     loopscrollResetTimeout: 1000, // Amount of milliseconds to wait before removing the loopscrolling effect, if used
 
-    // Interface settings
+    // GUI settings
     showTextInputDialog: true,      // Whether to draw the "text input" that allows text to be entered through the world content.
     showPowerButtons: true,         // Whether to draw the power buttons (Hard Reset and Soft Reset buttons)
     showLoopscrollIndicator: true,  // Whether to draw the loopscroll indicator, which is to the right of the terminal.
@@ -30,7 +30,10 @@
                                     // %v: Version string
     showNerdFontHyperlink: true,    // Show a link to the GitHub README's "Notice on Nerd fonts" page
 
-    // Cooldowns
+    // Restrictions
     hardResetCooldown: 300000, // Max. time to wait before hard resetting the VM (1 min.)
     softResetCooldown: 300000, // Max. time to wait before soft resetting the VM (1 min.)
+    whitelist: [],             // If this array isn't empty, only accept the users on it (only works on chat)
+    blacklist: [],             // Ignore users inside this array (only works on chat)
+    ignoreGuests: false,       // Ignore unregistered/guest users
 }
