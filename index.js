@@ -2,7 +2,14 @@ const version = "1.1.0";
 
 const fs = require("node:fs");
 const json5 = require("json5");
-const settingsFile = process.argv[2]??"settings.json5";
+let settingsFile = process.argv[2]??"settings.json5";
+if(!fs.existsSync(settingsFile)){
+    if(fs.existsSync(settingsFile+".json")){
+        settingsFile+=".json";
+    } else if(fs.existsSync(settingsFile+".json5")){
+        settingsFile+=".json5";
+    }
+}
 console.log("reading config file from",settingsFile);
 const settings = json5.parse(fs.readFileSync(settingsFile,"utf8"));
 
