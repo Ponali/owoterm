@@ -22,7 +22,7 @@ This is only a problem with OWOT, not OWOTerm. The character code points are the
 
 In order to fix these characters from displaying incorrectly, you'll first need to [install a pre-packaged nerd font](https://www.nerdfonts.com/font-downloads) on your computer. The font you will choose doesn't matter, since any one of them should have all the icons. Afterwards, you will need to load the font in OWOT, by going to the DevTools console (press Ctrl+Shift+I, then go to the Console tab in the new window). Inside the console, paste this:
 ```
-w.changeFont(fontTemplate+", 'Hack Nerd Font'")`
+w.changeFont(fontTemplate+", 'Hack Nerd Font'")
 ```
 then replace `Hack Nerd Font` with the name of the nerd font that you have installed.
 
