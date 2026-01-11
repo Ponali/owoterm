@@ -58,34 +58,34 @@ function writeCharToVisual(x,y,s,fg,bg,link){
     }
 }
 
-function writeText(x,y,s,fg,bg,link){
+async function writeText(x,y,s,fg,bg,link){
     for(let i=0;i<s.length;i++){
         writeCharToVisual(x+i,y,s[i],fg,bg,link);
     }
     if(loopscrolling && y<height && y>=0){
         y=(y+loopscroll)%height;
     }
-    botWriteText(x,y,s,fg,bg,link);
+    await botWriteText(x,y,s,fg,bg,link);
 }
 
-function writeChar(x,y,c,fg,bg,link,toVisual){
+async function writeChar(x,y,c,fg,bg,link,toVisual){
     if(toVisual || toVisual===undefined){
         writeCharToVisual(x,y,c,fg,bg,link);
     }
     if(loopscrolling && y<height && y>=0){
         y=(y+loopscroll)%height;
     }
-    botWriteChar(x,y,c,fg,bg,link);
+    await botWriteChar(x,y,c,fg,bg,link);
 }
 
-function indicateLoopScroll(){
+async function indicateLoopScroll(){
     if(!showLoopscrollIndicator) return;
     const color = loopscroll==0?0x00ff00:0x000040;
-    writeChar(width+1,0,"┐",color);
+    await writeChar(width+1,0,"┐",color);
     for(let i=1;i<height-1;i++){
-        writeChar(width+1,i,"│",color);
+        await writeChar(width+1,i,"│",color);
     }
-    writeChar(width+1,height-1,"┘",color);
+    await writeChar(width+1,height-1,"┘",color);
 }
 
 async function scrollDown(n){
@@ -98,9 +98,9 @@ async function scrollDown(n){
         }
         let [f,b] = invert?[bgcolor,fgcolor]:[fgcolor,bgcolor];
         for(let i=height-n;i<height;i++){
-            writeText(0,i," ".repeat(width),f,b);
+            await writeText(0,i," ".repeat(width),f,b);
         }
-        indicateLoopScroll();
+        await indicateLoopScroll();
     } else {
         /*const [x1,y1,x2,y2] = [offsetX,offsetY,width-1+offsetX,height-1+offsetY];
          *        await bot.flushWrites();
@@ -111,15 +111,15 @@ async function scrollDown(n){
         for(let y=n+scrollRegionTop;y<=scrollRegionBot;y++){
             for(let x=0;x<width;x++){
                 // const char = bot.getChar(x+offsetX,y+offsetY);
-                // writeChar(x,y-n,char.char,char.color,char.bgColor);
+                // await writeChar(x,y-n,char.char,char.color,char.bgColor);
                 const char = visual[y][x];
-                writeChar(x,y-n,char[0],char[1],char[2]);
+                await writeChar(x,y-n,char[0],char[1],char[2]);
             }
             await bot.flushWrites();
         }
         let [f,b] = invert?[bgcolor,fgcolor]:[fgcolor,bgcolor];
         for(let i=scrollRegionBot+1-n;i<=scrollRegionBot;i++){
-            writeText(0,i," ".repeat(width),f,b);
+            await writeText(0,i," ".repeat(width),f,b);
         }
         await bot.flushWrites();
         await sleep(100);
@@ -130,15 +130,15 @@ async function scrollUp(n){
     for(let y=scrollRegionBot;y>=n+scrollRegionTop;y--){
         for(let x=0;x<width;x++){
             // const char = bot.getChar(x+offsetX,y+offsetY);
-            // writeChar(x,y-n,char.char,char.color,char.bgColor);
+            // await writeChar(x,y-n,char.char,char.color,char.bgColor);
             const char = visual[y-n][x];
-            writeChar(x,y,char[0],char[1],char[2]);
+            await writeChar(x,y,char[0],char[1],char[2]);
         }
         await bot.flushWrites();
     }
     let [f,b] = invert?[bgcolor,fgcolor]:[fgcolor,bgcolor];
     for(let i=scrollRegionTop;i<scrollRegionTop+n;i++){
-        writeText(0,i," ".repeat(width),f,b);
+        await writeText(0,i," ".repeat(width),f,b);
     }
     await bot.flushWrites();
     await sleep(100);
@@ -150,13 +150,13 @@ function invertColor(c){
     return (r<<16)|(g<<8)|b;
 }
 
-function drawCursor(show){
+async function drawCursor(show){
     const char = visual[cury][curx];
     let f = char[1];
     let b = char[2];
     // console.log("drawCursor",curx,cury,show,f,b);
     if(show) [f,b] = [b,f];
-    writeChar(curx,cury,char[0],f,b,undefined,false);
+    await writeChar(curx,cury,char[0],f,b,undefined,false);
 }
 
 async function setCursor(x,y,scroll){ // absolute
@@ -198,9 +198,9 @@ async function drawChar(char){
             await scrollDown(cury+1-scrollRegionBot);
             cury=scrollRegionBot-1;
         }
-        writeChar(0,cury+1,char,fgcolor,bgcolor,hyperlink);
+        await writeChar(0,cury+1,char,fgcolor,bgcolor,hyperlink);
     } else {
-        writeChar(curx,cury,char,fgcolor,bgcolor,hyperlink);
+        await writeChar(curx,cury,char,fgcolor,bgcolor,hyperlink);
     }
     await moveCursorText(1);
 }
@@ -215,61 +215,61 @@ async function eraseInDisplay(type){
     let [f,b] = invert?[bgcolor,fgcolor]:[fgcolor,bgcolor];
     if(type==2 || (type==0 && curx==0 && cury==0)){
         for(let i=0;i<height;i++){
-            writeText(0,i," ".repeat(width),f,b);
+            await writeText(0,i," ".repeat(width),f,b);
             await bot.flushWrites();
         };
-        loopscroll=0;indicateLoopScroll();
+        loopscroll=0;await indicateLoopScroll();
         return
     }
     if(type==0){
-        writeText(curx,cury," ".repeat(width-curx),f,b);
+        await writeText(curx,cury," ".repeat(width-curx),f,b);
         for(let i=cury+1;i<height;i++){
-            writeText(0,i," ".repeat(width),f,b);
+            await writeText(0,i," ".repeat(width),f,b);
             await bot.flushWrites();
         };
     }
     if(type==1){
-        writeText(curx,cury," ".repeat(curx+1),f,b); // NOTE: i'm not sure about that "curx+1"
+        await writeText(curx,cury," ".repeat(curx+1),f,b); // NOTE: i'm not sure about that "curx+1"
         for(let i=0;i<cury;i++){
-            writeText(0,i," ".repeat(width),f,b);
+            await writeText(0,i," ".repeat(width),f,b);
             await bot.flushWrites();
         };
     }
 }
 
-function eraseInLine(type){
+async function eraseInLine(type){
     let [f,b] = invert?[bgcolor,fgcolor]:[fgcolor,bgcolor];
-    if(type==2) writeText(0,cury," ".repeat(width),f,b);
-    if(type==0) writeText(curx,cury," ".repeat(width-curx),f,b);
-    if(type==1) writeText(0,cury," ".repeat(curx),f,b);
+    if(type==2) await writeText(0,cury," ".repeat(width),f,b);
+    if(type==0) await writeText(curx,cury," ".repeat(width-curx),f,b);
+    if(type==1) await writeText(0,cury," ".repeat(curx),f,b);
 }
 
 function deviceStatusReport(){
     parentPort.postMessage({type:"streamWrite",str:"\x1b["+(cury+1)+";"+(curx+1)+"R"})
 }
 
-function deleteCharacters(n){
+async function deleteCharacters(n){
     if(n<=0) return;
     for(let x=curx+n;x<width;x++){
         const char = visual[cury][x];
-        writeChar(x-n,cury,char[0],char[1],char[2]);
+        await writeChar(x-n,cury,char[0],char[1],char[2]);
     }
-    writeText(width-n,cury," ".repeat(n),fgcolor,bgcolor);
+    await writeText(width-n,cury," ".repeat(n),fgcolor,bgcolor);
 }
 
 async function deleteLines(n){
     for(let y=n+cury;y<=scrollRegionBot;y++){
         for(let x=0;x<width;x++){
             // const char = bot.getChar(x+offsetX,y+offsetY);
-            // writeChar(x,y-n,char.char,char.color,char.bgColor);
+            // await writeChar(x,y-n,char.char,char.color,char.bgColor);
             const char = visual[y][x];
-            writeChar(x,y-n,char[0],char[1],char[2]);
+            await writeChar(x,y-n,char[0],char[1],char[2]);
         }
         await bot.flushWrites();
     }
     let [f,b] = invert?[bgcolor,fgcolor]:[fgcolor,bgcolor];
     for(let i=scrollRegionBot+1-n;i<=scrollRegionBot;i++){
-        writeText(0,i," ".repeat(width),f,b);
+        await writeText(0,i," ".repeat(width),f,b);
     }
     await bot.flushWrites();
     await sleep(100);
@@ -279,15 +279,15 @@ async function insertLines(n){
     for(let y=scrollRegionBot;y>=n+cury;y--){
         for(let x=0;x<width;x++){
             // const char = bot.getChar(x+offsetX,y+offsetY);
-            // writeChar(x,y-n,char.char,char.color,char.bgColor);
+            // await writeChar(x,y-n,char.char,char.color,char.bgColor);
             const char = visual[y-n][x];
-            writeChar(x,y,char[0],char[1],char[2]);
+            await writeChar(x,y,char[0],char[1],char[2]);
         }
         await bot.flushWrites();
     }
     let [f,b] = invert?[bgcolor,fgcolor]:[fgcolor,bgcolor];
     for(let i=cury;i<cury+n;i++){
-        writeText(0,i," ".repeat(width),f,b);
+        await writeText(0,i," ".repeat(width),f,b);
     }
     await bot.flushWrites();
     await sleep(100);
@@ -297,18 +297,18 @@ async function reload(){
     for(let y=0;y<height;y++){
         for(let x=0;x<width;x++){
             const char = visual[y][x];
-            writeChar(x,y,char[0],char[1],char[2],char[3]);
+            await writeChar(x,y,char[0],char[1],char[2],char[3]);
         }
         await bot.flushWrites();
     }
-    if(curVisible) drawCursor(true);
+    if(curVisible) await drawCursor(true);
 }
 
 async function resetLoopScroll(){
     if(loopscroll==0 || (!loopscrolling)) return;
     loopscroll=0;
     await reload();
-    indicateLoopScroll();
+    await indicateLoopScroll();
 }
 
 function setMargin(code){
@@ -318,7 +318,7 @@ function setMargin(code){
     // console.log(`set margin to ${scrollRegionTop},${scrollRegionBot} (real=${code.slice(0,2).join(",")})`);
 }
 
-function special(type,enable){
+async function special(type,enable){
     if(type==25){
         curVisible = enable;
     }
@@ -328,7 +328,7 @@ function special(type,enable){
             if(enable){
                 copyBuffer(visual,alt.visual);
                 for(let y=0;y<height;y++){
-                    writeText(0,y," ".repeat(width),fgcolor,bgcolor);
+                    await writeText(0,y," ".repeat(width),fgcolor,bgcolor);
                 }
                 alt.curx = curx;
                 alt.cury = cury;
@@ -357,8 +357,8 @@ async function handleMessage(m){
     if(m.type=="csi"){
         if(m.special){
             switch(m.final){
-                case "l":return special(m.code[0],false);break;
-                case "h":return special(m.code[0],true);break;
+                case "l":return await special(m.code[0],false);break;
+                case "h":return await special(m.code[0],true);break;
             }
         }
         if(m.exclamation){
@@ -383,13 +383,13 @@ async function handleMessage(m){
                 case "G": setCursor(m.code[0]-1,cury,false);break;
                 case "H": case "f": await setCursor(m.code[1]-1,m.code[0]-1);break;
                 case "J": eraseInDisplay(m.code[0]);break;
-                case "K": eraseInLine(m.code[0]);break;
+                case "K": await eraseInLine(m.code[0]);break;
                 case "L": await insertLines(Math.max(m.code[0],1));break;
                 case "M": await deleteLines(Math.max(m.code[0],1));break;
-                case "P": deleteCharacters(m.code[0]);break;
+                case "P": await deleteCharacters(m.code[0]);break;
                 case "S": await scrollDown(Math.max(m.code[0],1));break;
                 case "T": await scrollUp(Math.max(m.code[0],1));break;
-                case "X": writeText(curx,cury," ".repeat(Math.max(m.code[0],1)),fgcolor,bgcolor);break;
+                case "X": await writeText(curx,cury," ".repeat(Math.max(m.code[0],1)),fgcolor,bgcolor);break;
                 case "c": parentPort.postMessage({type:"streamWrite",str:primaryDeviceAttributes});break;
                 case "d": setCursor(curx,m.code[0]-1,false);break;
                 case "m": sgr(m.code,[invert,fgcolor,bgcolor,a=>{fgcolor=a??defaultfg},a=>{bgcolor=a??defaultbg},a=>{invert=a}]);break;
@@ -456,7 +456,7 @@ let cursorShown = false;
 
 async function onPendingQueue(lastMessageTimestamp){
     if(cursorShown){
-        drawCursor(false);
+        await drawCursor(false);
         cursorShown=false;
         await bot.flushWrites();
     }
@@ -464,7 +464,7 @@ async function onPendingQueue(lastMessageTimestamp){
 
 async function onEmptyQueue(lastMessageTimestamp){
     if(!cursorShown && curVisible){
-        drawCursor(true);
+        await drawCursor(true);
         cursorShown=true;
     }
     if(lastMessageTimestamp+loopscrollResetTimeout<Date.now()){
@@ -488,10 +488,10 @@ function init(b,pp,wc,wt,s){
 async function onConnect(){
     await setCursor(0,0,false);
     for(let i=0;i<height;i++){
-        writeText(0,i," ".repeat(width),fgcolor,bgcolor);
+        await writeText(0,i," ".repeat(width),fgcolor,bgcolor);
         await bot.flushWrites();
     }
-    if(loopscrolling) indicateLoopScroll();
+    if(loopscrolling) await indicateLoopScroll();
 }
 
 module.exports = {

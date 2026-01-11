@@ -150,12 +150,12 @@ Writing text to terminal:
     }
 }
 
-function drawTextArea(){
+async function drawTextArea(){
     if(!showTextInputDialog) return;
     const title = "┤ Text input ├";
-    writeText(0,height+1,"╭"+"─".repeat(width-2-title.length)+title+"╮");
-    writeText(0,height+2,"│"+" ".repeat(width-2)+"│");
-    writeText(0,height+3,"╰"+"─".repeat(width-2)+"╯");
+    await writeText(0,height+1,"╭"+"─".repeat(width-2-title.length)+title+"╮");
+    await writeText(0,height+2,"│"+" ".repeat(width-2)+"│");
+    await writeText(0,height+3,"╰"+"─".repeat(width-2)+"╯");
 }
 
 function powerButtonY(){
@@ -163,12 +163,12 @@ function powerButtonY(){
     return height+4;
 }
 
-function drawPowerButton(type){
+async function drawPowerButton(type){
     if(!showPowerButtons) return;
     let baseY = powerButtonY();
     switch(type){
-        case 0:if(qmpPort) writeText(0,baseY,"⏻ Hard Reset",0x600000,0xaaaaaa);break;
-        case 1:if(qmpPort) writeText(13,baseY,"↻ Soft Reset",0x000000,0xaaaaaa);break;
+        case 0:if(qmpPort) await writeText(0,baseY,"⏻ Hard Reset",0x600000,0xaaaaaa);break;
+        case 1:if(qmpPort) await writeText(13,baseY,"↻ Soft Reset",0x000000,0xaaaaaa);break;
     }
 }
 
@@ -199,16 +199,16 @@ function cursorMove(channelID,hidden,x,y){
     x-=offsetX;y-=offsetY;
     if(showTextInputDialog){
         if(y==height+3 && x>=1 && x<=width-1){
-            getTextInputValue(x==1?undefined:(x-1)).then(str=>{
+            getTextInputValue(x==1?undefined:(x-1)).then(async str=>{
                 if(x==1) str=str+"\r"
                     parentPort.postMessage({type:"streamWrite",str});
-                drawTextArea();
+                await drawTextArea();
             })
         }
         if(y==height+2 && x==width-1){
-            getTextInputValue(width-2).then(str=>{
+            getTextInputValue(width-2).then(async str=>{
                 parentPort.postMessage({type:"streamWrite",str});
-                drawTextArea();
+                await drawTextArea();
             })
         }
     }
@@ -220,15 +220,15 @@ let tx1,ty1,tx2,ty2;
 
 let oldChars = {};
 
-function onCharChange(x,y,c,fg,bg){
+async function onCharChange(x,y,c,fg,bg){
     // console.log(`char change pos=${x},${y} c='${c}' fg=${fg.toString(16).padStart(6,"0")} bg=${bg.toString(16).padStart(6,"0")}`);
     let baseY = powerButtonY();
     if(showPowerButtons && y==baseY){
         if(x>=0 && x<12){
-            hardReset(); drawPowerButton(0);
+            hardReset(); await drawPowerButton(0);
         }
         if(x>=13 && x<25){
-            softReset(); drawPowerButton(1);
+            softReset(); await drawPowerButton(1);
         }
     }
 }
@@ -263,12 +263,12 @@ async function init(properties){
     // console.error(`chars: ${cx1},${cy1} -> ${cx2},${cy2}`);
 
     // init text input
-    drawTextArea();
+    await drawTextArea();
     bot.on("guestCursor",cursorMove);
 
     // init power buttons
     for(let i=0;i<2;i++){
-        drawPowerButton(i);
+        await drawPowerButton(i);
     }
 
     // init tile updating

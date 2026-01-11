@@ -17,28 +17,36 @@ function sleep(n){
     })
 }
 
-function writeText(x,y,s,fg,bg,link){
+async function writeText(x,y,s,fg,bg,link){
     let ox = x+offsetX;
     let oy = y+offsetY;
     for(let i=0;i<s.length;i++){
         input.flagCharUpdated(ox+i,oy,s[i],fg,bg);
     }
     bot.writeText(ox,oy,s,fg,bg);
+    if(link || bot.writeBuffer.length+s.length>=1024){
+        // console.log("length",bot.writeBuffer.length,bot.writeBuffer.length+s.length)
+        await bot.flushWrites();
+        await sleep(10);
+    }
     if(link){
-        bot.flushWrites(); // NOTE: normally this is asynchronous but this somehow doesn't return a promise so .then() doesn't work
         for(let i=0;i<s.length;i++){
             bot.urlLink(ox+i,oy,link);
         }
     }
 }
 
-function writeChar(x,y,c,fg,bg,link){
+async function writeChar(x,y,c,fg,bg,link){
     let ox = x+offsetX;
     let oy = y+offsetY;
     input.flagCharUpdated(ox,oy,c,fg,bg);
     bot.writeChar(ox,oy,c,fg,bg);
+    if(link || bot.writeBuffer.length+1>=1024){
+        // console.log("length",bot.writeBuffer.length,bot.writeBuffer.length+1)
+        await bot.flushWrites(); // flush writes when there's too much
+        await sleep(10);
+    }
     if(link){
-        bot.flushWrites(); // see comment in writeText
         bot.urlLink(ox,oy,link);
     }
 }
