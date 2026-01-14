@@ -1,8 +1,10 @@
 let bot,parentPort,writeChar,writeText,offsetX,offsetY,width,height,reload;
 let hardResetCooldownStamp = Date.now();
 let softResetCooldownStamp = Date.now();
+let buttonGriefCooldownStamp = Date.now();
 let hardResetCooldown;
 let softResetCooldown;
+let buttonGriefCooldown;
 let showTextInputDialog,showPowerButtons;
 let displayName = "OWOTerm";
 let chatColor = "#000000";
@@ -224,6 +226,11 @@ async function onCharChange(x,y,c,fg,bg){
     // console.log(`char change pos=${x},${y} c='${c}' fg=${fg.toString(16).padStart(6,"0")} bg=${bg.toString(16).padStart(6,"0")}`);
     let baseY = powerButtonY();
     if(showPowerButtons && y==baseY){
+        if(buttonGriefCooldownStamp+buttonGriefCooldown>Date.now()){
+            return;
+        } else {
+            buttonGriefCooldownStamp=Date.now();
+        }
         if(x>=0 && x<12){
             hardReset(); await drawPowerButton(0);
         }
@@ -294,7 +301,7 @@ function flagCharUpdated(x,y,c,fg,bg){
 }
 
 function settings(s){
-    ({hardResetCooldown,softResetCooldown,showTextInputDialog,showPowerButtons,qmpPort,displayName,chatColor,whitelist,blacklist,ignoreGuests} = s); // why?????????
+    ({hardResetCooldown,softResetCooldown,buttonGriefCooldown,showTextInputDialog,showPowerButtons,qmpPort,displayName,chatColor,whitelist,blacklist,ignoreGuests} = s); // why?????????
 }
 
 module.exports = {
